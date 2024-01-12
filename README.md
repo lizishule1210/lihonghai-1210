@@ -23,9 +23,6 @@ hc智慧家园小程序 是 HC小区开源项目的一个分支项目，主要�
 ![image](doc/readme/qrcode.png)
 
 
-### 分支说明
-
-分支管理说明，test为最新代码未测试代码（主要为了防止本地代码遗失），master 为最新测试过代码（待产品化），product 为产品化代码
 
 ### 系统功能（function） 
 
@@ -44,10 +41,9 @@ hc智慧家园小程序 是 HC小区开源项目的一个分支项目，主要�
 [https://space.bilibili.com/403702784/channel/seriesdetail?sid=2999419](https://space.bilibili.com/403702784/channel/seriesdetail?sid=2999419)
 
 ### 运行效果
-
-![image](doc/readme/index.jpg)
-![image](doc/readme/service.jpg)
-![image](doc/readme/my.jpg)
+<img src="/doc/readme/index.jpg" width="250px"/>
+<img src="/doc/readme/service.jpg" width="250px"/>
+<img src="/doc/readme/my.jpg" width="250px"/>
 
 ### 加入我们
 
