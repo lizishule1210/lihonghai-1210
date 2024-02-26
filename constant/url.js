@@ -110,7 +110,7 @@ export default {
 	// 查询申请类型（空置房）
 	queryApplyRoomDiscountType: baseUrl + "app/applyRoomDiscount/queryApplyRoomDiscountType",
 	saveApplyRoomDiscount: baseUrl + "app/applyRoomDiscount/saveApplyRoomDiscount",
-	openDoor: baseUrl + "app/machine/openDoor",
+	openDoor: baseUrl + "app/iot.openAccessControlDoor",
 	getQrCode: baseUrl + "app/machine/getQRcode",
 	queryOwnerCars: baseUrl + "app/parkingSpaceApply.listParkingSpaceApply",
 	customCarInOut: baseUrl + "app/machine.customCarInOutCmd", //手工保存车牌号
