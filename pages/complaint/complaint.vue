@@ -12,7 +12,7 @@
 		<view class="block__title">投诉信息</view>
 		<view class="cu-form-group">
 			<view class="title">投诉类型</view>
-			<picker :value="complaintIndex" :range="columns" @change="_changeComplaint">
+			<picker :value="complaintIndex" :range="typeCds" :range-key="'typeName'" @change="_changeComplaint">
 				<view class="picker">
 					{{typeName}}
 				</view>
@@ -20,14 +20,14 @@
 		</view>
 		<view class="cu-form-group">
 			<view class="title">投诉人</view>
-			<input id="complaintName" :value="complaintName" @input="bindInput" placeholder="请输入投诉人"></input>
+			<input id="complaintName" v-model="complaintName"  placeholder="请输入投诉人"></input>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">手机号</view>
-			<input id="tel" :value="tel" @input="bindInput" placeholder="请输入手机号"></input>
+			<input id="tel" v-model="tel"  placeholder="请输入手机号"></input>
 		</view>
 		<view class="cu-form-group margin-top">
-			<textarea id="context" :value="context" @input="bindInput" placeholder="请输入投诉内容"></textarea>
+			<textarea id="context" v-model="context" placeholder="请输入投诉内容"></textarea>
 		</view>
 
 		<view class="block__title">照片信息</view>
@@ -35,7 +35,7 @@
 		
 		<view class="button_up_blank"></view>
 		<view class="flex flex-direction">
-			<button class="cu-btn bg-green margin-tb-sm lg" @click="bindOwner()">提交</button>
+			<button class="cu-btn bg-green margin-tb-sm lg" @click="_submitComplaint()">提交</button>
 		</view>
 	</view>
 </template>
@@ -44,9 +44,11 @@
 	// pages/enterCommunity/enterCommunity.js
 	import * as TanslateImage from '../../lib/java110/utils/translate-image.js';
 	
-	import {checkPhoneNumber} from '../../lib/java110/utils/StringUtil.js'
-	import context from '../../lib/java110/Java110Context.js'
+	import {checkPhoneNumber} from '../../lib/java110/utils/StringUtil.js';
+	import context from '../../lib/java110/Java110Context.js';
 	import uploadImageAsync from "../../components/vc-upload-async/vc-upload-async.vue";
+	import {complaint,getComplaintType} from '@/api/community/complaintApi.js';
+	import {getCommunityId} from '@/api/community/communityApi.js'
 	const constant = context.constant;
 	const factory = context.factory;
 
@@ -62,8 +64,7 @@
 				roomName: "请选择",
 				roomId: '',
 				roomShow: false,
-				columns: ['投诉', '建议','咨询'],
-				typeCds: ['809001', '809002', '809003'],
+				typeCds: [],
 				typeName: '请选择',
 				typeCd: '',
 				typeShow: false,
@@ -82,7 +83,6 @@
 				}
 			};
 		},
-		
 		components: {
 			uploadImageAsync
 		},
@@ -97,7 +97,7 @@
 				let roomCloums = [];
 				let roomIdArr = [];
 				arr.map(item => {
-					roomCloums.push(item.floorNum + "号楼" + item.unitNum + "单元" + item.roomNum + "室");
+					roomCloums.push(item.floorNum + "-" + item.unitNum + "-" + item.roomNum);
 					roomIdArr.push(item.roomId);
 				});
 				that.roomCloums = roomCloums;
@@ -107,37 +107,8 @@
 				that.complaintName = res.data.owner.appUserName;
 				that.tel = res.data.owner.link;
 			});
+			this._loadComplaintType();
 		},
-
-		/**
-		 * 生命周期函数--监听页面初次渲染完成
-		 */
-		onReady: function() {},
-
-		/**
-		 * 生命周期函数--监听页面显示
-		 */
-		onShow: function() {},
-
-		/**
-		 * 生命周期函数--监听页面隐藏
-		 */
-		onHide: function() {},
-
-		/**
-		 * 生命周期函数--监听页面卸载
-		 */
-		onUnload: function() {},
-
-		/**
-		 * 页面相关事件处理函数--监听用户下拉动作
-		 */
-		onPullDownRefresh: function() {},
-
-		/**
-		 * 页面上拉触底事件的处理函数
-		 */
-		onReachBottom: function() {},
 
 		/**
 		 * 用户点击右上角分享
@@ -153,31 +124,15 @@
 				}
 			},
 			_changeComplaint:function(e){
-				this.typeName = this.columns[e.detail.value];
-				this.typeCd = this.typeCds[e.detail.value];
+				this.typeName = this.typeCds[e.detail.value].typeName;
+				this.typeCd = this.typeCds[e.detail.value].typeCd;
 			},
 			_changeRoom: function(e) {
 				this.roomName = this.roomCloums[e.detail.value];
 				this.roomId = this.roomIdArr[e.detail.value];
 			},
-			bindInput: function(e) {
-				console.log('数据监听', e);
-				switch (e.target.id) {
-					case "complaintName":
-						this.$data.complaintName = e.detail.value;
-						break;
-					case "tel":
-						this.$data.tel = e.detail.value;
-						break;
-					case "context":
-						this.$data.context = e.detail.value;
-						break;
-				}
-				console.log(this);
-			},
-			bindOwner: function(e) {
-			
-				let obj = {
+			_submitComplaint: function(e) {
+				complaint({
 					"typeCd": this.typeCd,
 					"complaintName": this.complaintName,
 					"tel": this.tel,
@@ -186,93 +141,56 @@
 					"context": this.context,
 					"userId": this.userId,
 					"communityId": this.communityId
-				};
-				let msg = "";
-
-				if (obj.typeCd == "") {
-					msg = "请选择投诉类型";
-				} else if (obj.complaintName == "") {
-					msg = "请填写投诉人";
-				} else if (obj.tel == "") {
-					msg = "请填写手机号";
-				} else if (!checkPhoneNumber(obj.tel)) {
-					msg = "手机号有误";
-				} else if (obj.context == "") {
-					msg = "请填写投诉内容";
-				}
-
-				if (msg != "") {
-					wx.showToast({
-						title: msg,
-						icon: 'none',
-						duration: 2000
-					});
-				} else {
-					console.log("提交数据", obj);
-					context.request({
-						url: constant.url.saveComplaint,
-						header: context.getHeaders(),
-						method: "POST",
-						data: obj,
-						//动态数据
-						success: function(res) {
-							let _json = res.data;
-							if (_json.code == 0) {
-								// wx.redirectTo({
-								// 	url: '/pages/complaint/complaintList',
-								// });
-								uni.navigateTo({
-									url:"/pages/successPage/successPage?msg=提交成功&objType=4004"
-								})
-								return;
-							}
-							wx.showToast({
-								title: "服务器异常了",
-								icon: 'none',
-								duration: 2000
-							})
-						},
-						fail: function(e) {
-							console.log(e);
-							wx.showToast({
-								title: "服务器异常了",
-								icon: 'none',
-								duration: 2000
-							});
-						}
-					});
-				}
+				}).then(_data =>{
+					uni.navigateTo({
+						url:"/pages/successPage/successPage?msg=提交成功&objType=4004"
+					})
+				},err=>{
+					uni.showToast({
+						icon:'none',
+						title:err
+					})
+				});
 			},
-			onChange: function(e) {
-				console.log(e);
-			},
-			onTypeConfirm: function(e) {
-				console.log("onConfirm", e);
-				this.typeName = e.detail.value;
-				this.typeCd = e.detail.index ? '809001' : '809002';
-				this.typeShow = false;
-			},
-			onTypeCancel: function(e) {
-				this.typeShow = false;
-			},
-			chooseType: function(e) {
-				this.typeShow = true;
-			},
-			onRoomConfirm: function(e) {
-				console.log("onConfirm", e);
-				this.roomName = e.detail.value;
-				this.roomId = this.roomIdArr[e.detail.index];
-				this.roomShow = false;
-			},
-			onRoomCancel: function(e) {
-				this.roomShow = false;
-			},
-			chooseRoom: function(e) {
-				this.roomShow = true;
-			},
+			_loadComplaintType:function(){
+				let _that = this;
+				getComplaintType({
+					page:1,
+					row:100,
+					communityId:getCommunityId()
+				}).then(_data=>{
+					_that.typeCds = _data.data;
+				})
+			}
 		}
 	};
 </script>
 <style>
-	@import "./complaint.css";
+	
+	
+	.block__title {
+	  margin: 0;
+	  font-weight: 400;
+	  font-size: 14px;
+	  color: rgba(69,90,100,.6);
+	  padding: 40rpx 30rpx 20rpx;
+	}
+	
+	.button_up_blank{
+	  height: 40rpx;
+	}
+	
+	.uploader-container{
+	  margin: 0 10px;
+	}
+	
+	.aku_photo_view{
+	  background-color: #FFF;
+	  padding: 40rpx 0 40rpx 40rpx;
+	}
+	
+	.aku_photo_view text{
+	  font-size: 30rpx;
+	  color: #8a8a8a
+	}
 </style>
