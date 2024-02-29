@@ -91,6 +91,16 @@ export function getCommunityName(){
 	return conf.DEFAULT_COMMUNITY_NAME;
 }
 
+
+export function getCommunityTel(){
+	let _currentCommunity = uni.getStorageSync("currentCommunityInfo")
+	if(_currentCommunity){
+		return _currentCommunity.sCommunityTel;
+	}
+	return '';
+}
+
+
 /**
  * 查询当前小区
  * 
