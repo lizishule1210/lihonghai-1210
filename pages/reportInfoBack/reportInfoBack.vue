@@ -175,7 +175,7 @@
 				};
 				let msg = "";
 				if(obj.communityId == "") {
-					msg = "请从新扫码";
+					msg = "请重新扫码";
 				} else if(obj.name == "") {
 					msg = "请填写姓名";
 				} else if (obj.idCard == "" || obj.idCard.length != 18) {

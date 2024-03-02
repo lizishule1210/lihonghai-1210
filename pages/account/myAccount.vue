@@ -84,7 +84,7 @@
 			},
 			myAccountDetail: function(_item) {
 				this.vc.navigateTo({
-					url: '/pages/account/myAccountDetail?acctId=' + _item.acctId
+					url: '/pages/account/myAccountDetail?acctId=' + _item.acctId + '&acctType=' + _item.acctType
 				});
 			},
 			/**

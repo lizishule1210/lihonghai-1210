@@ -97,11 +97,12 @@
 						}
 						queryOwnerAccount({
 							page: 1,
-							row: 1,
+							row: 99,
 							idCard: _ownerInfo.idCard,
 							link: _ownerInfo.link,
 							communityId: _communityId,
-							acctType:'2003'
+							// acctType:'2003',
+							acctTypes: '2003,2004'
 						}).then((data) => {
 							if (!data) {
 								_that.accounts = [];

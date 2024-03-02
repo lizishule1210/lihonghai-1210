@@ -13,6 +13,7 @@
             'key', 
             { last: j === row.length - 1 },
             { 'is-delete': deleteKeys.includes(key) },
+            { 'is-ban': banKeys.includes(key) },
           ]" 
           v-for="(key, j) in row" 
           :key="key"
@@ -50,6 +51,7 @@
 		data() {
 			return {
         deleteKeys: ['-', '='], // 避免2个删除按钮key冲突
+		banKeys: ['I', 'O'], // 禁用键
         provinces: [
           [ "京", "津", "沪", "渝", "川", "新", "藏", "宁", "桂", "贵" ],
           [ "云", "黑", "吉", "辽", "晋", "冀", "青", "鲁", "豫", "苏" ],
@@ -73,6 +75,10 @@
     },
 		methods: {
       keyTapHandler(key) {
+		if (this.banKeys.includes(key)) {
+		  return;
+		}
+		  
         if (this.deleteKeys.includes(key)) {
           this.$emit('on-delete');
           return;
@@ -153,6 +159,10 @@
     &.is-delete {
       width: 134rpx;
     }
+	
+	&.is-ban {
+	  background-color: #999;
+	}
 
     &.last {
       margin-right: 0;

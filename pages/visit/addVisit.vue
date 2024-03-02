@@ -63,7 +63,7 @@
 
 		<view class="button_up_blank"></view>
 		<view class="noti">
-			<view class="text-red text-sm margin-left-sm">*预计来访时和预计离开时间间隔不能超过24小时</view>
+			<!-- <view class="text-red text-sm margin-left-sm">*预计来访时和预计离开时间间隔不能超过24小时</view> -->
 			<view class="text-red text-sm margin-left-sm">*预约车辆自开始时间起计算，免费停放{{freeInfo.freeTime}}分钟  </view>
 			<view class="text-red text-sm margin-left-sm" v-show="freeInfo.freeTimes > 0">*预约车辆每天限制{{freeInfo.freeTimes}}次登记，超过次数系统不会审核</view>
 		</view>
@@ -78,7 +78,8 @@
 	// pages/visit/addVisit.js
 	import context from '../../lib/java110/Java110Context.js';
 	const factory = context.factory;
-	import {listOwnerVisit, saveAddVisit}  from '../../api/visit/visit.js'
+	import {listOwnerVisit, saveAddVisit,queryReasonTypes}  from '../../api/visit/visit.js'
+	import {queryDict} from '../../api/user/userApi.js'
 	import uniDatetimePicker from '../../components/uni-datetime-picker/uni-datetime-picker.vue'
 	import CarNumber from '../../components/codecook-carnumber/components/codecook-carnumber/codecook-carnumber.vue'
 	import {formatTimeNow} from '../../lib/java110/utils/DateUtil.js'
@@ -107,17 +108,11 @@
 				visitTime: '',
 				departureTime: '',
 				visitCase: '',
-				reasonType: 0,
+				reasonType: '',
 				reasonTypeIndex: 0,
 				reasonTypeScopes: [{
-						value: '0',
-						name: '喜事'
-					},
-					{
-						value: '1',
-						name: '白事'
-					}
-				],
+					name: '请选择'
+				}],
 				roomCloums: [],
 				roomIdArr: [],
 				ownerId: '',
@@ -170,6 +165,7 @@
 				}
 				// 查询免费时长、次数信息
 				that._queryFreeInfo();
+				that._queryReasonTypeList();
 			});
 		},
 		
@@ -189,14 +185,24 @@
 					_that.freeInfo = info;
 				})
 			},
+			_queryReasonTypeList: function(){
+				let _that = this;
+				let _objData = {
+					name: "s_visit_info",
+					type: "reason_type"
+				}
+				queryDict(_objData).then(function(info){
+					_that.reasonTypeScopes = _that.reasonTypeScopes.concat(info);
+				})
+			},
 			// 选择性别
 			visitGenderChange: function(e){
 				this.visitGenderIndex = e.target.value
 				this.visitGender = this.visitGenderScopes[this.visitGenderIndex].value;
 			},
 			reasonTypeChange: function(e){
-				this.reasonTypeIndex = e.target.value
-				this.reasonType = this.reasonTypeScopes[this.reasonTypeIndex].value;
+				this.reasonTypeIndex = e.detail.value
+				this.reasonType = this.reasonTypeScopes[this.reasonTypeIndex].statusCd;
 			},
 			roomChange: function(e) {
 				this.roomId = this.roomIdArr[e.detail.value];
@@ -240,6 +246,8 @@
 					msg = "随行人数有误";
 				} else if (obj.departureTime == "") {
 					msg = "请选择结束时间";
+				} else if (obj.reasonType === '') {
+					msg = "请选择事由类型";
 				} else if (obj.visitCase == "") {
 					msg = "请填写拜访事由";
 				}else{
@@ -250,8 +258,6 @@
 						msg = "开始时间有误";
 					}else if (end == 0 || start - end >= 0) {
 						msg = "结束时间有误";
-					}else if(end - start > 86400 * 1000){
-						msg = "时间间隔不能超过24小时";
 					}
 				}
 				

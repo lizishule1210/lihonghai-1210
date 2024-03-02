@@ -8,7 +8,7 @@
 			<view v-for="(item,index) in visits" :key="index" class="bg-white margin-bottom margin-right-xs radius margin-left-xs padding" @click="_showDetail(item)">
 				<view class="flex padding-bottom-xs solid-bottom justify-between">
 					<view>预约状态</view>
-					<view class="text-gray">{{item.recordState == 1 ? '已失效' : '已生效'}}</view>
+					<view class="text-gray">{{item.state == 0 || item.state == 2 || item.state == 3 ? '未生效' : (item.recordState == 0 ? '已生效' : '已失效')}}</view>
 				</view>
 				<view class="flex margin-top justify-between">
 					<view class="text-gray">访客姓名</view>

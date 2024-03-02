@@ -4,8 +4,8 @@
 		<view v-if="accountDetails.length > 0">
 			<view v-for="(item,index) in accountDetails" :key="index" class="bg-white margin-bottom margin-right-xs radius margin-left-xs padding">
 				<view class="flex padding-bottom-xs solid-bottom justify-between">
-					<view>金额</view>
-					<view class="text-gray">{{item.amount}}元</view>
+					<view>{{acctType == 2004 ? '积分' : '金额'}}</view>
+					<view class="text-gray">{{item.amount}}{{acctType == 2004 ? '分' : '元'}}</view>
 				</view>
 				<view class="flex margin-top justify-between">
 					<view class="text-gray">交易编号</view>
@@ -53,6 +53,7 @@
 		data() {
 			return {
 				acctId: '',
+				acctType: '', // 区分余额/积分
 				accountDetails: [],
 				communityId: '',
 				noData: false,
@@ -76,6 +77,7 @@
 		onLoad: function(options) {
 			context.onLoad(options);
 			this.acctId = options.acctId;
+			this.acctType = options.acctType;
 			let _that = this;
 			context.getOwner(function(_owner) {
 				_that.communityId = _owner.communityId;

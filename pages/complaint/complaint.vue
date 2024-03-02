@@ -161,7 +161,6 @@
 				this.roomId = this.roomIdArr[e.detail.value];
 			},
 			bindInput: function(e) {
-				console.log('数据监听', e);
 				switch (e.target.id) {
 					case "complaintName":
 						this.$data.complaintName = e.detail.value;
@@ -173,7 +172,6 @@
 						this.$data.context = e.detail.value;
 						break;
 				}
-				console.log(this);
 			},
 			bindOwner: function(e) {
 			
@@ -188,8 +186,10 @@
 					"communityId": this.communityId
 				};
 				let msg = "";
-
-				if (obj.typeCd == "") {
+				
+				if (obj.roomId == "") {
+					msg = "请选择房屋";
+				} else if (obj.typeCd == "") {
 					msg = "请选择投诉类型";
 				} else if (obj.complaintName == "") {
 					msg = "请填写投诉人";
@@ -208,7 +208,6 @@
 						duration: 2000
 					});
 				} else {
-					console.log("提交数据", obj);
 					context.request({
 						url: constant.url.saveComplaint,
 						header: context.getHeaders(),
@@ -227,13 +226,12 @@
 								return;
 							}
 							wx.showToast({
-								title: "服务器异常了",
+								title: _json.msg,
 								icon: 'none',
 								duration: 2000
 							})
 						},
 						fail: function(e) {
-							console.log(e);
 							wx.showToast({
 								title: "服务器异常了",
 								icon: 'none',
@@ -244,10 +242,8 @@
 				}
 			},
 			onChange: function(e) {
-				console.log(e);
 			},
 			onTypeConfirm: function(e) {
-				console.log("onConfirm", e);
 				this.typeName = e.detail.value;
 				this.typeCd = e.detail.index ? '809001' : '809002';
 				this.typeShow = false;
@@ -259,7 +255,6 @@
 				this.typeShow = true;
 			},
 			onRoomConfirm: function(e) {
-				console.log("onConfirm", e);
 				this.roomName = e.detail.value;
 				this.roomId = this.roomIdArr[e.detail.index];
 				this.roomShow = false;

@@ -304,8 +304,8 @@
 					msg = "请选择报修类型";
 				} else if (obj.repairName == "") {
 					msg = "请填写报修人";
-				} else if (checkStrLength(obj.repairName) > 10) {
-					msg = "报修人长度不能超过5位";
+				} else if (checkStrLength(obj.repairName) > 30) {
+					msg = "报修人长度不能超过15位";
 				} else if (obj.tel == "") {
 					msg = "请填写手机号";
 				} else if (!checkPhoneNumber(obj.tel)) {

@@ -11,7 +11,7 @@
 			<button disabled="disabled" class="cu-btn bg-blue shadow-blur round lg">确认支付</button>
 		</view>
 		<view class="cu-bar btn-group" style="margin-top: 30px;" v-else>
-			<button @click="_submit" class="cu-btn bg-blue shadow-blur round lg">确认支付</button>
+			<button @click="_submit" class="cu-btn bg-blue shadow-blur round lg" :disabled="banButton">确认支付</button>
 		</view>
 
 	</view>
@@ -46,6 +46,7 @@
 				data: {},
 				appId:'',
 				cashierUserId:'',
+				banButton: false, // 禁用支付按钮
 			}
 		},
 		mounted() {
@@ -156,6 +157,7 @@
 					});
 					return;
 				}
+				this.banButton = true;
 				let _data = this.data;
 				_data.business = this.business;
 				_data.tradeType = 'JSAPI';

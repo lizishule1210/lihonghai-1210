@@ -603,6 +603,7 @@ export function cashierPayFee(_that, _data,_successUrl) {
 					},
 					'fail': function(res) {
 						console.log('fail:' + JSON.stringify(res));
+						_that.banButton = false;
 					}
 				});
 				// #endif
@@ -635,6 +636,7 @@ export function cashierPayFee(_that, _data,_successUrl) {
 				icon: 'none',
 				duration: 2000
 			});
+			_that.banButton = false;
 		},
 		fail: function(e) {
 			wx.hideLoading();
@@ -643,6 +645,7 @@ export function cashierPayFee(_that, _data,_successUrl) {
 				icon: 'none',
 				duration: 2000
 			});
+			_that.banButton = false;
 		}
 	});
 
