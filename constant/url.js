@@ -14,7 +14,11 @@ export default {
 	listOwnerRepairs: baseUrl + 'app/ownerRepair.listOwnerRepairs', //查询报修
 	saveOwner: baseUrl + 'app/owner.saveOwnerMember', //家庭成员列表
 	queryOwnerMembers: baseUrl + 'app/owner.queryOwnerMembers', //投诉建议列表
-	listComplaints: baseUrl + 'app/complaint.listComplaints', //添加投诉建议
+	listComplaints: baseUrl + 'app/complaint.queryUserComplaints', //添加投诉建议
+	listComplaintEvent: baseUrl + 'app/complaint.listComplaintEvent', //添加投诉建议
+	saveComplaintAppraise: baseUrl + 'app/complaintAppraise.saveComplaintAppraise', //添加投诉建议
+	listComplaintType: baseUrl + 'app/complaintType.listComplaintType', //查询投诉类型
+	
 	saveComplaint: baseUrl + 'app/complaint.saveComplaint', //查询业主房间
 	queryRoomsByOwner: baseUrl + 'app/room.queryRoomsByOwner', //绑定业主
 	appUserBindingOwner: baseUrl + 'app/owner.appUserBindingOwner', //查询绑定业主
@@ -110,7 +114,7 @@ export default {
 	// 查询申请类型（空置房）
 	queryApplyRoomDiscountType: baseUrl + "app/applyRoomDiscount/queryApplyRoomDiscountType",
 	saveApplyRoomDiscount: baseUrl + "app/applyRoomDiscount/saveApplyRoomDiscount",
-	openDoor: baseUrl + "app/machine/openDoor",
+	openDoor: baseUrl + "app/iot.openAccessControlDoor",
 	getQrCode: baseUrl + "app/machine/getQRcode",
 	queryOwnerCars: baseUrl + "app/parkingSpaceApply.listParkingSpaceApply",
 	customCarInOut: baseUrl + "app/machine.customCarInOutCmd", //手工保存车牌号

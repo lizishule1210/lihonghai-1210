@@ -19,16 +19,16 @@
 					<text class="text-grey">房屋编码</text>
 				</view>
 				<view class="action">
-					<text class="text-grey text-sm">{{complaint.floorNum}}号楼{{complaint.unitNum}}单元{{complaint.roomNum}}室</text>
+					<text class="text-grey text-sm">{{complaint.roomName}}</text>
 				</view>
 			</view>
 			<view class="cu-item">
 				<view class="content">
 					<text class="cuIcon-footprint text-green"></text>
-					<text class="text-grey">单类型</text>
+					<text class="text-grey">类型</text>
 				</view>
 				<view class="action">
-					<text class="text-grey text-sm">{{complaint.typeCdName}}单</text>
+					<text class="text-grey text-sm">{{complaint.typeName}}</text>
 				</view>
 			</view>
 			<view class="cu-item">
@@ -67,7 +67,7 @@
 				</view>
 			</view>
 			
-			<view class="cu-item" v-if="complaint.photos.length > 0">
+			<view class="cu-item" v-if="complaint.photos && complaint.photos.length > 0">
 				<view class="margin-top grid text-center col-3 grid-square" >
 					<view class="" v-for="(_item,index) in complaint.photos" :key="index">
 						<image mode="scaleToFill" :data-url="_item.url" :src="_item.url" @tap="preview(index)"></image>
@@ -80,14 +80,26 @@
 		<view class="cu-timeline margin-top">
 			<view class="cu-time">工单</view>
 			<view class="cu-item " v-for="(item,index) in audits" :key="index">
-				<view class="bg-cyan content"  v-if="item.state == '1001'">
-					<text>{{item.auditName}} 于</text> {{item.auditTime}} 处理完成
+				<view class="bg-cyan content"  v-if="item.eventType == '1000'">
+					<text>{{item.createUserName}} 于</text> {{item.createTime}} 投诉
 				</view>
-				<view class="bg-cyan content" v-if="item.state == '2002'">
-					<text>{{item.auditName}} </text> 正在处理
+				<view class="bg-cyan content" v-if="item.eventType == '1001'">
+					<text>{{item.createUserName}} 于</text> {{item.createTime}}处理
 				</view>
-				<view class="bg-cyan content" v-if="item.state == '1001'">
-					<text>处理意见：</text> {{item.message}}
+				<view class="bg-cyan content" v-if="item.eventType == '1001'">
+					<text>处理意见：</text> {{item.remark}}
+				</view>
+				<view class="bg-cyan content" v-if="item.eventType == '2002'">
+					<text>{{item.createUserName}} 于</text> {{item.createTime}}评价
+				</view>
+				<view class="bg-cyan content" v-if="item.eventType == '2002'">
+					<text>评价内容：</text> {{item.remark}}
+				</view>
+				<view class="bg-cyan content" v-if="item.eventType == '3003'">
+					<text>{{item.createUserName}} 于</text> {{item.createTime}}回复
+				</view>
+				<view class="bg-cyan content" v-if="item.eventType == '3003'">
+					<text>回复内容：</text> {{item.remark}}
 				</view>
 			</view>
 		</view>
@@ -97,7 +109,8 @@
 <script>
 	import context from '../../lib/java110/Java110Context.js';
 	const constant = context.constant;
-	import config from '../../conf/config.js'
+	import config from '../../conf/config.js';
+	import {getComplaints,getComplaintEvent} from '@/api/community/complaintApi.js';
 	export default {
 		data() {
 			return {
@@ -121,79 +134,25 @@
 			 */
 			_loadCompaint: function(_active) {
 				let that = this;
-				let _paramIn = {
+				getComplaints({
 					complaintId: that.complaintId,
 					page: 1,
 					row: 1,
 					communityId: that.communityId
-				};
-				context.request({
-					url: constant.url.listComplaints,
-					header: context.getHeaders(),
-					method: "GET",
-					data: _paramIn,
-					success: function(res) {
-						if (res.statusCode == 200) {
-							let _ownerComplaints = res.data.complaints;						
-							that.complaint = _ownerComplaints[0];
-							if(that.complaint.photos.length > 0){
-								that.complaint.photos.forEach((item) => {
-									item.url = that.photoUrl + "?fileId=" + item.url + "&communityId=-1&time=" + new Date();
-								})
-							}
-							return;
-						}
-			
-						wx.showToast({
-							title: res.data,
-							icon: 'none',
-							duration: 2000
-						});
-					},
-					fail: function(e) {
-						wx.showToast({
-							title: "服务器异常了",
-							icon: 'none',
-							duration: 2000
-						})
-					}
-				})
+				}).then(_data=>{
+					let _ownerComplaints = _data.data;
+					that.complaint = _ownerComplaints[0];
+				});
 			},
 			_listWorkflowAuditInfo: function(_active) {
-				let that = this;
-				let _paramIn = {
-					businessKey: that.complaintId,
-					communityId: that.communityId
-				};
-				context.request({
-					url: constant.url.listWorkflowAuditInfo,
-					header: context.getHeaders(),
-					method: "GET",
-					data: _paramIn,
-					success: function(res) {
-						let _json = res.data;
-						
-						if (_json.code == 0) {
-							let _audits = _json.data;
-											
-							that.audits = _audits;
-				
-							return;
-						}
-			
-						wx.showToast({
-							title: _json.msg,
-							icon: 'none',
-							duration: 2000
-						});
-					},
-					fail: function(e) {
-						wx.showToast({
-							title: "服务器异常了",
-							icon: 'none',
-							duration: 2000
-						})
-					}
+				let _that =this;
+				getComplaintEvent({
+					complaintId: _that.complaintId,
+					page: 1,
+					row: 100,
+					communityId: _that.communityId
+				}).then(_data=>{
+					_that.audits = _data.data;
 				})
 			},
 			preview: function(index) {

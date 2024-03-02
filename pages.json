@@ -258,9 +258,9 @@
 				"navigationBarTitleText": "投诉详情"
 			}
 		}, {
-			"path": "pages/complaint/complaintHandle",
+			"path": "pages/complaint/appraiseComplaint",
 			"style": {
-				"navigationBarTitleText": "投诉待办"
+				"navigationBarTitleText": "评价投诉"
 			}
 		// }, {
 		// 	"path": "pages/login/registerByWechat",

@@ -74,7 +74,7 @@ export function listOwnerMachines(_objData){
 			data: _objData, //动态数据
 			success: function(res) {
 				if (res.statusCode == 200) {
-					let _machines = res.data.machines;
+					let _machines = res.data.data;
 					resolve(_machines);
 					return;
 				}

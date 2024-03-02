@@ -69,6 +69,8 @@
 	import {
 		getProperty
 	} from '../../api/property/propertyApi.js';
+	
+	import {getCommunityName,getCommunityTel} from '../../api/community/communityApi.js';
 
 	export default {
 		name: "indexMenu",
@@ -158,14 +160,11 @@
 					});
 					return;
 				}
-				hasOwner();
-				uni.getStorage({
-					key: 'ownerInfo',
-					success: function(res) {
-						_that.property = res.data;
-						_that.callPropertyModal = true;
-					}
-				});
+				
+				this.property.sCommunityTel = getCommunityTel();
+				this.property.communityName = getCommunityName();
+				_that.callPropertyModal = true;
+				
 			},
 			_doCall: function() {
 
