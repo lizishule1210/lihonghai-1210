@@ -186,6 +186,7 @@
 	import noDataPage from '@/components/no-data-page/no-data-page.vue'
 	import context from '../../lib/java110/Java110Context.js';
 	import {listRepairStaffs} from '@/api/repair/repairApi.js';
+	import {getUserId} from '../../api/user/userApi.js';
 	const factory = context.factory;;
 	const constant = context.constant;
 	export default {
@@ -216,8 +217,8 @@
 		onLoad: function(options) {
 			let that = this;
 			context.onLoad(options);
+			this.userId = getUserId();
 			context.getOwner(res => {
-				that.userId = res.userId;
 				that.communityId = res.communityId;
 				that._loadRepair(that.active);
 			});

@@ -70,12 +70,7 @@
 				合计：{{feeInfo.amount}}元
 			</view>
 			<view class="btn-group">
-				<!-- #ifdef H5 || MP-WEIXIN -->
 				<button class="cu-btn bg-red shadow-blur lgplus sharp" @click="onPayFee()">提交订单</button>
-				<!-- #endif -->
-				<!-- #ifdef APP-PLUS -->
-				<button class="cu-btn bg-red shadow-blur lgplus sharp" @click="_payWxApp()">提交订单</button>
-				<!-- #endif -->
 			</view>
 
 
@@ -86,27 +81,31 @@
 </template>
 
 <script>
-	import {date2String} from '../../lib/java110/utils/DateUtil.js'
+	import {
+		date2String
+	} from '../../lib/java110/utils/DateUtil.js'
 	import context from '../../lib/java110/Java110Context.js';
+	import {getUserId} from '../../api/user/userApi.js';
 	const constant = context.constant;
 	const util = context.util;
-	
-	// #ifdef H5
-	
-	const WexinPayFactory = require('../../factory/WexinPayFactory.js');
-	
-	// #endif
+
+	import {
+		payFeeApp,
+		payFeeWechat,
+		computeObjFee
+	} from '@/api/fee/feeApi.js';
+
 
 	export default {
 		data() {
 			return {
 				communityId: '',
 				communityName: '',
-				repairId:'',
+				repairId: '',
 				appId: '',
-				repairInfo:{},
-				feeInfo:{},
-				userId:'',
+				repairInfo: {},
+				feeInfo: {},
+				userId: '',
 				payerObjId: '',
 				payerObjType: '3333',
 				endTime: '',
@@ -125,9 +124,9 @@
 			let accountInfo = uni.getAccountInfoSync();
 			this.appId = accountInfo.miniProgram.appId;
 			// #endif
-			
+
 			// #ifdef H5
-				this.appId = uni.getStorageSync(constant.mapping.W_APP_ID)
+			this.appId = uni.getStorageSync(constant.mapping.W_APP_ID)
 			// #endif
 			this.communityId = options.communityId;
 			this.repairId = options.repairId;
@@ -138,7 +137,7 @@
 			this.repairObjName = options.repairObjName;
 			this.repairName = options.repairName;
 			this.remark = options.context
-			
+
 			this._loadRepair();
 			this._listFee();
 		},
@@ -222,174 +221,53 @@
 					}
 				})
 			},
-			_payWxApp: function(_data) {
-				wx.showLoading({
-					title: '支付中'
-				});
-				let _tradeType = 'APP';
-				let _objData = {
-					cycles: 1,
-					communityId: this.communityId,
-					feeId: this.feeInfo.feeId,
-					feeName: '报修费',
-					receivedAmount: this.feeInfo.feePrice,
-					tradeType: _tradeType,
-					appId: this.appId
-				};
-				context.request({
-					url: constant.url.preOrder,
-					header: context.getHeaders(),
-					method: "POST",
-					data: _objData,
-					//动态数据
-					success: function(res) {
-						if (res.statusCode == 200 && res.data.code == '0') {
-							let data = res.data; //成功情况下跳转
-							let obj = {
-								appid: data.appId,
-								noncestr: data.nonceStr,
-								package: 'Sign=WXPay', // 固定值，以微信支付文档为主
-								partnerid: data.partnerid,
-								prepayid: data.prepayid,
-								timestamp: data.timeStamp,
-								sign: data.sign // 根据签名算法生成签名
-							}
-							// 第二种写法，传对象字符串
-							let orderInfo = JSON.stringify(obj)
-							uni.requestPayment({
-								provider: 'wxpay',
-								orderInfo: orderInfo, //微信、支付宝订单数据
-								success: function(res) {
-									uni.showToast({
-										title: "支付成功",
-										duration: 2000
-									});
-									uni.navigateBack({});
-								},
-								fail: function(err) {
-									console.log('fail:' + JSON.stringify(err));
-								}
-							});
-							wx.hideLoading();
-							return;
-						}
-
-						wx.hideLoading();
-						wx.showToast({
-							title: "缴费失败",
-							icon: 'none',
-							duration: 2000
-						});
-					},
-					fail: function(e) {
-						wx.hideLoading();
-						wx.showToast({
-							title: "服务器异常了",
-							icon: 'none',
-							duration: 2000
-						});
-					}
-				});
-			},
 			onPayFee: function() {
 				wx.showLoading({
 					title: '支付中'
 				});
 				let _tradeType = 'JSAPI';
+				let _receivedAmount = this.feeInfo.feePrice;
 				let _objData = {
+					business: "payFee",
 					cycles: '1',
 					communityId: this.communityId,
 					feeId: this.feeInfo.feeId,
 					feeName: '报修费',
-					receivedAmount: this.feeInfo.feePrice,
+					receivedAmount: _receivedAmount,
 					tradeType: _tradeType,
 					appId: this.appId,
 					endTime: this.endTime,
 					payerObjId: this.payerObjId,
 					payerObjType: this.payerObjType
 				};
-				context.request({
-					url: constant.url.preOrder,
-					header: context.getHeaders(),
-					method: "POST",
-					data: _objData,
-					//动态数据
-					success: function(res) {
-
-						if (res.statusCode == 200 && res.data.code == '0') {
-							let data = res.data; //成功情况下跳转
-							// #ifdef MP-WEIXIN
-							uni.requestPayment({
-								'timeStamp': data.timeStamp,
-								'nonceStr': data.nonceStr,
-								'package': data.package,
-								'signType': data.signType,
-								'paySign': data.sign,
-								'success': function(res) {
-									uni.showToast({
-										title: "支付成功",
-										duration: 2000
-									});
-									uni.navigateBack({});
-								},
-								'fail': function(res) {
-									console.log('fail:' + JSON.stringify(res));
-								}
-							});
-							// #endif
-							// #ifdef H5
-								WexinPayFactory.wexinPay(data,function(){
-									uni.showToast({
-										title: "支付成功",
-										duration: 2000
-									});
-									uni.navigateBack({});
-								});
-							// #endif
-							wx.hideLoading();
-							return;
-						}
-
-						wx.hideLoading();
-						wx.showToast({
-							title: "缴费失败",
-							icon: 'none',
-							duration: 2000
-						});
-					},
-					fail: function(e) {
-						wx.hideLoading();
-						wx.showToast({
-							title: "服务器异常了",
-							icon: 'none',
-							duration: 2000
-						});
-					}
-				});
+				uni.setStorageSync('doing_cashier', _objData);
+				uni.navigateTo({
+					url: '/pages/fee/cashier?money=' + _receivedAmount + "&business=payFee&communityId=" + this
+						.communityId + "&cashierUserId=" + getUserId()
+				})
 			}
 		}
 	};
 </script>
 <style>
-	
-	.ppf_item{
-	  padding: 0rpx 0rpx 0rpx 0rpx;
+	.ppf_item {
+		padding: 0rpx 0rpx 0rpx 0rpx;
 	}
-	
+
 	.block__title {
-	  margin: 0;
-	  font-weight: 400;
-	  font-size: 14px;
-	  color: rgba(69,90,100,.6);
-	  padding: 40rpx 30rpx 20rpx;
+		margin: 0;
+		font-weight: 400;
+		font-size: 14px;
+		color: rgba(69, 90, 100, .6);
+		padding: 40rpx 30rpx 20rpx;
 	}
-	
-	.button_up_blank{
-	  height: 40rpx;
+
+	.button_up_blank {
+		height: 40rpx;
 	}
-	
-	.block__bottom{
-	  height: 180rpx;
+
+	.block__bottom {
+		height: 180rpx;
 	}
 
 	.fee-last {
