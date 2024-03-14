@@ -52,7 +52,8 @@
 	const constant = context.constant;
 	import {getCurCommunity} from '../../api/community/communityApi.js'
 	
-	import {getProperty} from '../../api/property/propertyApi.js'
+	import {getProperty} from '../../api/property/propertyApi.js';
+
 
 
 	export default {
@@ -91,7 +92,7 @@
 				_this.communityId = _owner.communityId;
 				_this.ownerId = _owner.memberId;
 				_this.userId = _owner.ownerId;
-				_this.applyPersonName = _owner.appUserName;
+				_this.applyPersonName = _owner.ownerName;
 				_this.applyPersonLink = _owner.link;
 				_this.applyPersonId = _owner.ownerId;
 				_this.listParkingSpace();

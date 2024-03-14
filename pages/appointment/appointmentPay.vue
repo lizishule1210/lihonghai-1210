@@ -387,7 +387,6 @@
 
 								return;
 							} else if (res.data.code == '404') {
-								debugger
 								let tipsIndex = res.data.msg.indexOf("已经被预约");
 								if (tipsIndex>=0){
 								let tips = _that.HoursStr(res.data.msg.substr(0, tipsIndex))+"\n\r" + res.data.msg

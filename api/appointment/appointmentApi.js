@@ -17,11 +17,7 @@ import mapping from '../../constant/MappingConstant.js';
 export function getBetweenTime(startTime, endTime) {
 	// debugger
 	// 校验时间格式
-	if (typeof startTime === 'string' && typeof endTime === 'string') {
-		const reg = /^(0?[1-9]|([1-2][0-4])):(([0-5][0-9])(:([0-9][0-9]))?)$/;
-		if (!reg.test(startTime)) throw `开始时间：${startTime} 时间格式错误`;
-		if (!reg.test(endTime)) throw `结束时间：${endTime} 时间格式错误`;
-	} else throw `${startTime} 或者 ${endTime} 时间格式错误`;
+	
 	let start = +startTime.split(':')[0];
 	let end = +endTime.split(':')[0];
 	const resultTime = [];
