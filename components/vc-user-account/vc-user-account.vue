@@ -27,7 +27,8 @@
 	import context from '../../lib/java110/Java110Context.js';
 	import {
 		queryOwnerAccount
-	} from '../../api/user/userApi.js'
+	} from '../../api/user/userApi.js';
+	import {getCommunityId} from '../../api/community/communityApi.js'
 	export default {
 		components: {
 		},
@@ -92,9 +93,6 @@
 				let _that = this;
 				context.getOwner(function(_ownerInfo) {
 					if (_ownerInfo) {
-						if(!_that.communityId){
-							_that.communityId = _ownerInfo.communityId
-						}
 						queryOwnerAccount({
 							page: 1,
 							row: 99,

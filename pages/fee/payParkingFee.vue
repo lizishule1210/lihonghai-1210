@@ -202,7 +202,7 @@
 			prevPage.needFefresh = false;
 			this.$nextTick(() => {
 				this.$refs.vcDiscountRef._loadFeeDiscount(this.feeId, this.communityId, this.feeMonth);
-				this.$refs.vcUserAccountRef._listOwnerAccount(this.feeId, this.communityId);
+				this.$refs.vcUserAccountRef._listOwnerAccount(this.communityId);
 				this.$refs.giftCoupon.listGiftCoupon(this.feeId, this.communityId, this.feeMonth);
 			});
 			this.payOnline = _fee.payOnline;

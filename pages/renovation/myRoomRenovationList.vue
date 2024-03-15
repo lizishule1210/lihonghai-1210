@@ -87,7 +87,7 @@
 				this.loadingStatus = 'more';
 				let _that = this;
 				let params = {
-					roomName: this.roomDetail.floorNum + '-' + this.roomDetail.unitNum + '-' + this.roomDetail.roomNum,
+					roomId:this.roomDetail.roomId,
 					communityId: this.roomDetail.communityId,
 					page: _that.page,
 					row: 10,
