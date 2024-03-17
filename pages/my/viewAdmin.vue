@@ -73,6 +73,7 @@
 
 <script>
 	import context from '../../lib/java110/Java110Context.js';
+	import {getCommunityName} from '@/api/community/communityApi.js'
 	const constant = context.constant;
 	export default {
 		data() {
@@ -94,7 +95,7 @@
 			    let _active = _ownerInfo.state == '10000' ? 1 : 2;
 		
 			      _that.communityId= _ownerInfo.communityId;
-			      _that.communityName= _ownerInfo.communityName;
+			      _that.communityName= getCommunityName();
 				  _that._loadAdmin();
 			  }
 			});
