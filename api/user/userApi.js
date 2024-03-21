@@ -311,15 +311,6 @@ export function ownerLogin(_that, _data) {
 						communityName:_json.data.communityName,
 						sCommunityTel:_json.data.communityTel
 					});
-					uni.setStorageSync("ownerInfo",{
-						memberId:_json.data.memberId,
-						ownerName:_json.data.ownerName,
-						ownerId:_json.data.ownerId,
-						ownerTel:_json.data.ownerTel,
-						communityId:_json.data.communityId,
-						link:_json.data.ownerTel,
-						ownerTypeCd:_json.data.ownerTypeCd
-					})
 					resolve(_json.data);
 				},
 				fail: function(e) {

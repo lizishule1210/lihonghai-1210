@@ -5,10 +5,10 @@
 			<view class="cu-item">
 				<view class="content">
 					<text class="cuIcon-vip text-green"></text>
-					<text class="text-grey">{{owner.appUserName}}</text>
+					<text class="text-grey">{{userName}}</text>
 				</view>
 				<view class="action">
-					{{owner.link}}
+					{{userTel}}
 				</view>
 			</view>
 
@@ -105,7 +105,8 @@
 	import {
 		getBooks
 	} from '../../api/booking/bookingApi.js';
-	import url from '@/constant/url.js'
+	import url from '@/constant/url.js';
+	import {getUserName,getUserTel} from '../../api/user/userApi.js'
 
 	export default {
 		data() {
@@ -114,7 +115,8 @@
 				curBooking: {},
 				moreRooms: [],
 				noData: false,
-				owner: [],
+				userName:'',
+				userTel:'',
 				// W 待核销 C核销完成 T申请退款 Y已退款
 				parkingType: [{
 					"name": '全部',
@@ -138,6 +140,8 @@
 		 */
 		onLoad: function(options) {
 			context.onLoad(options);
+			this.userName = getUserName();
+			this.userTel = getUserTel();
 		},
 		/**
 		 * 生命周期函数--监听页面显示
@@ -162,9 +166,7 @@
 				getBooks(0).then(data => {
 					wx.hideLoading();
 					let _bookings = data.data;
-					_that.owner = data.owner;
 					_that.moreRooms = [];
-
 					if (_bookings.length == 0) {
 						_that.noData = true;
 						return;

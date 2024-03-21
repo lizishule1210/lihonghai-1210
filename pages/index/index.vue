@@ -8,7 +8,7 @@
 
 		<index-notice></index-notice>
 		
-		
+	
 	</view>
 </template>
 
@@ -16,7 +16,7 @@
 	import uniNoticeBar from '@/components/uni-notice-bar/uni-notice-bar.vue'
 	import indexAds from '@/components/index/index-ads.vue'
 	import indexMenu from '@/components/index/index-menu.vue'
-	import indexNotice from '@/components/index/index-notice.vue'
+	import indexNotice from '@/components/index/index-notice.vue';
 	import {
 		getActivitiTitle,
 		getCategoryList,
@@ -64,7 +64,7 @@
 			uniNoticeBar,
 			indexAds,
 			indexMenu,
-			indexNotice
+			indexNotice,
 		},
 		/**
 		 * 生命周期函数--监听页面加载

@@ -23,15 +23,12 @@
 			return {
 				communityId:'',
 				appId:'',
-				appUserId:'',
 				openId:'',
-				appUserId:'',
 			}
 		},
 		onLoad(options) {
 			this.communityId = options.communityId;
 			this.openId = options.openId;
-			this.appUserId = options.appUserId;
 			let _that = this;
 			if(this.openId){
 				this.saveOpenIdToOwner();
@@ -128,7 +125,6 @@
 			},
 			saveOpenIdToOwner:function(){
 				refreshAppUserBindingOwnerOpenId(this,{
-					appUserId:this.appUserId,
 					openId:this.openId,
 					communityId:this.communityId
 				}).then(_data=>{

@@ -21,10 +21,13 @@ export default {
 	
 	saveComplaint: baseUrl + 'app/complaint.saveComplaint', //查询业主房间
 	queryRoomsByOwner: baseUrl + 'app/room.queryRoomsByOwner', //绑定业主
+	queryRoomsByApp: baseUrl + 'app/room.queryRoomsByApp', //绑定业主
 	appUserBindingOwner: baseUrl + 'app/owner.appUserBindingOwner', //查询绑定业主
+	authOwner: baseUrl + 'app/owner.authOwner', //业主认证
 	ownerRegiter: baseUrl + 'app/owner.ownerRegister', //业主注册
 	ownerRegisterWxPhoto: baseUrl + 'app/owner.ownerRegisterWxPhoto', //业主注册
 	queryAppUserBindingOwner: baseUrl + 'app/owner.listAppUserBindingOwners', //解绑业主
+	queryUserAuthOwner: baseUrl + 'app/owner.queryUserAuthOwner', // 查询认证业主
 	appUserUnBindingOwner: baseUrl + 'app/owner.deleteAppUserBindingOwner', //查询业主门禁
 	listOwnerMachines: baseUrl + 'app/owner.listOwnerMachines', // 申请钥匙
 	applyApplicationKey: baseUrl + "app/applicationKey.applyApplicationKey", //查询钥匙

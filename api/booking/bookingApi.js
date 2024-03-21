@@ -17,8 +17,8 @@ mapping
 from '../../constant/MappingConstant.js'
 
 import {
-	getOwnerTel
-} from '../owner/ownerApi.js';
+	getUserTel
+} from '../user/userApi.js';
 
 import {getCommunityId} from '../community/communityApi.js'
 
@@ -33,7 +33,7 @@ export function getBooks(_objData) {
 			communityId: getCommunityId(),
 		}
 		if (_objData == 0) {
-			d['personTel'] = getOwnerTel();
+			d['personTel'] = getUserTel();
 		}
 		request({
 			url: url.querySpacePerson,

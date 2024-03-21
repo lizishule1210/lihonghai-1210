@@ -7,12 +7,19 @@
 
 import {
 	request
-} from '../../lib/java110/java110Request.js'
+} from '../../lib/java110/java110Request.js';
 import
 url
-from '../../constant/url.js'
+from '../../constant/url.js';
 
-import mapping from '../../constant/MappingConstant.js'
+import mapping from '../../constant/MappingConstant.js';
+
+import {
+	hasLogin
+} from '../user/sessionApi.js';
+import {
+	getCommunityId
+} from '../community/communityApi.js';
 
 export function getOwnerId() {
 	let _ownerInfo = wx.getStorageSync(mapping.OWNER_INFO);
@@ -45,6 +52,58 @@ export function getMemberId() {
 	}
 	return "-1"
 }
+
+/**
+ * 是否认证了业主
+ */
+export function hasAuthOwner(_that) {
+	return new Promise((resolve, reject) => {
+		if (!hasLogin()) {
+			uni.showToast({
+				icon: 'none',
+				title: '未登录,请先登录!'
+			});
+			reject('未登录,请先登录!');
+			return;
+		}
+		let _ownerInfo = wx.getStorageSync(mapping.OWNER_INFO);
+		if (_ownerInfo) {
+			resolve(_ownerInfo);
+			return;
+		}
+
+		request({
+			url: url.queryUserAuthOwner,
+			method: "GET",
+			data: {
+				page: 1,
+				row: 1
+			},
+			success: function(res) {
+				let _json = res.data;
+				if (_json.code != 0) {
+					//todo 弹出 认证对话框
+					_that.$refs.authOwnerDialogRef.openDialog(_json.code, _json.msg);
+					reject(_json.msg);
+					return;
+				}
+				let _ownerInfo = _json.data;
+				wx.setStorageSync(mapping.OWNER_INFO, _ownerInfo);
+				let _currentCommunityInfo = {
+					communityId: _ownerInfo.communityId,
+					communityName: _ownerInfo.communityName
+				};
+				wx.setStorageSync(mapping.CURRENT_COMMUNITY_INFO, _currentCommunityInfo);
+				resolve(_ownerInfo);
+			},
+			fail: function(error) {
+				// 查询失败
+				reject();
+			}
+		});
+	})
+}
+
 
 /**
  * 查询当前业主信息
@@ -298,6 +357,60 @@ export function loadLoginOwner(_data) {
 			},
 			fail: function(e) {
 				reject(e);
+			}
+		});
+	})
+}
+
+/**
+ * 认证业主
+ * @param {Object} _data
+ */
+export function authOwner(_data) {
+	let msg = "";
+	if (_data.communityId == "") {
+		msg = "请选择小区";
+	} else if (_data.roomId == "") {
+		msg = "请选择房屋";
+	} else if (_data.roomName == "") {
+		msg = "请选择房屋";
+	} else if (_data.link == "") {
+		msg = "请填写手机号";
+	} else if (_data.ownerName == "") {
+		msg = "请填写人员名称";
+	} else if (_data.ownerTypeCd == "") {
+		msg = "请选择人员类型";
+	}
+
+	if (msg != "") {
+		wx.showToast({
+			title: msg,
+			icon: 'none',
+			duration: 2000
+		});
+		return;
+	}
+	return new Promise((resolve, reject) => {
+		request({
+			url: url.authOwner,
+			method: "POST",
+			data: _data,
+			success: function(res) {
+				let _json = res.data;
+				if (_json.code != 0) {
+					wx.showToast({
+						title: _json.msg,
+						icon: 'none',
+						duration: 2000
+					});
+					reject(_json.msg);
+					return;
+				}
+				resolve(_json);
+			},
+			fail: function(error) {
+				// 查询失败
+				reject();
 			}
 		});
 	})

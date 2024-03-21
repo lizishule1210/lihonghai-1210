@@ -1,9 +1,10 @@
 import {
-	requestNoAuth,request
+	requestNoAuth,
+	request
 } from '../../lib/java110/java110Request.js';
-import 
-	url
- from '../../constant/url.js'
+import
+url
+from '../../constant/url.js'
 
 
 import {
@@ -12,7 +13,9 @@ import {
 
 import mapping from '../../constant/MappingConstant.js'
 
-import {getCurOwner} from '../owner/ownerApi.js'
+import {
+	getCurOwner
+} from '../owner/ownerApi.js'
 
 import conf from '../../conf/config.js'
 
@@ -37,9 +40,9 @@ export function getCommunitys(dataObj) {
 					if (res.statusCode == 200) {
 						let _communtiys = res.data.communitys;
 						resolve(_communtiys);
-						return ;
+						return;
 					}
-					
+
 				},
 				fail: function(e) {
 					wx.showToast({
@@ -53,48 +56,48 @@ export function getCommunitys(dataObj) {
 }
 
 
-export function getMallCommunityId(){
+export function getMallCommunityId() {
 	let _currentCommunity = uni.getStorageSync(mapping.CURRENT_MALL_COMMUNITY_INFO)
-	if(_currentCommunity){
+	if (_currentCommunity) {
 		return _currentCommunity.communityId;
 	}
-	return  getCommunityId();
+	return getCommunityId();
 }
 
-export function getMallCommunityName(){
+export function getMallCommunityName() {
 	let _currentCommunity = uni.getStorageSync(mapping.CURRENT_MALL_COMMUNITY_INFO)
-	if(_currentCommunity){
+	if (_currentCommunity) {
 		return _currentCommunity.name;
 	}
 	return getCommunityName();
 }
 
-export function getCommunityId(){
+export function getCommunityId() {
 
 	let _currentCommunity = uni.getStorageSync("currentCommunityInfo")
-	if(_currentCommunity){
+	if (_currentCommunity) {
 		return _currentCommunity.communityId;
 	}
-	
+
 	return conf.DEFAULT_COMMUNITY_ID;
-	
+
 }
 
 
 
 
-export function getCommunityName(){
+export function getCommunityName() {
 	let _currentCommunity = uni.getStorageSync("currentCommunityInfo")
-	if(_currentCommunity){
+	if (_currentCommunity) {
 		return _currentCommunity.communityName;
 	}
 	return conf.DEFAULT_COMMUNITY_NAME;
 }
 
 
-export function getCommunityTel(){
+export function getCommunityTel() {
 	let _currentCommunity = uni.getStorageSync("currentCommunityInfo")
-	if(_currentCommunity){
+	if (_currentCommunity) {
 		return _currentCommunity.sCommunityTel;
 	}
 	return '';
@@ -109,9 +112,9 @@ export function getCommunityTel(){
 export function getCurCommunity() {
 	return new Promise((resolve, reject) => {
 		let _currentCommunityInfo = uni.getStorageSync("currentCommunityInfo");
-		if(!_currentCommunityInfo){
+		if (!_currentCommunityInfo) {
 			_currentCommunityInfo = {
-				communityId:conf.DEFAULT_COMMUNITY_ID,
+				communityId: conf.DEFAULT_COMMUNITY_ID,
 				communityName: conf.DEFAULT_COMMUNITY_NAME
 			}
 		}
@@ -123,22 +126,22 @@ export function getCurCommunity() {
  * 将小区信息 刷入 _obj对象
  * @param {Object} _obj 刷入 小区信息对象
  */
-export function recoveryCommunityInfo(_obj){
-	
-	return new Promise((resolve,reject) => {
+export function recoveryCommunityInfo(_obj) {
+
+	return new Promise((resolve, reject) => {
 		getCurCommunity()
-		.then((_communityInfo)=>{
-			if(_obj.hasOwnProperty("communityId")){
-				_obj.communityId = _communityInfo.communityId;
-			}
-			
-			if(_obj.hasOwnProperty("communityName")){
-				_obj.communityName = _communityInfo.communityName;
-			}
-			resolve(_communityInfo);
-		})
+			.then((_communityInfo) => {
+				if (_obj.hasOwnProperty("communityId")) {
+					_obj.communityId = _communityInfo.communityId;
+				}
+
+				if (_obj.hasOwnProperty("communityName")) {
+					_obj.communityName = _communityInfo.communityName;
+				}
+				resolve(_communityInfo);
+			})
 	})
-	
+
 }
 
 /**
@@ -164,7 +167,7 @@ export function getOwnerCommunitys(dataObj) {
 				}
 			});
 		})
-		
+
 }
 
 /**
@@ -190,7 +193,7 @@ export function listParkingAreas(dataObj) {
 				}
 			});
 		})
-		
+
 }
 
 /**
@@ -217,5 +220,75 @@ export function getCommunityPublicity(dataObj) {
 				}
 			});
 		})
-		
+
+}
+
+export function queryFloors(_objData) {
+	return new Promise((resolve, reject) => {
+		requestNoAuth({
+			url: url.queryFloor,
+			data: _objData,
+			method: "GET",
+			//动态数据
+			success: function(res) {
+				let _json = res.data;
+
+				resolve(_json.apiFloorDataVoList);
+
+
+			},
+			fail: function(e) {
+				uni.hideLoading();
+				uni.showToast({
+					title: "服务器异常了",
+					icon: 'none'
+				})
+			}
+		});
+	})
+}
+export function queryUnits(_objData) {
+	return new Promise((resolve, reject) => {
+		requestNoAuth({
+			url: url.queryUnit,
+			data: _objData,
+			method: "GET",
+			//动态数据
+			success: function(res) {
+				resolve(res.data);
+			},
+			fail: function(e) {
+				uni.hideLoading();
+				uni.showToast({
+					title: "服务器异常了",
+					icon: 'none'
+				})
+			}
+		});
+	})
+}
+export function queryRoomsByApp(_objData) {
+	return new Promise((resolve, reject) => {
+		requestNoAuth({
+			url: url.queryRoomsByApp,
+			data: _objData,
+			method: "GET",
+			//动态数据
+			success: function(res) {
+				let _json = res.data;
+				if (_json.code == 0) {
+					resolve(_json.data);
+					return;
+				}
+				reject();
+			},
+			fail: function(e) {
+				uni.hideLoading();
+				uni.showToast({
+					title: "服务器异常了",
+					icon: 'none'
+				})
+			}
+		});
+	})
 }

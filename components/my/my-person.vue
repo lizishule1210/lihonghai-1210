@@ -46,6 +46,7 @@
 				</view>
 			</view>
 		</view>
+			<auth-owner-dialog ref="authOwnerDialogRef"></auth-owner-dialog>
 	</view>
 </template>
 
@@ -61,7 +62,10 @@
 	
 	import {getCommunityId,getCommunityName}  from '../../api/community/communityApi.js';
 	
-	import {loadLoginOwner,getMemberId} from '../../api/owner/ownerApi.js';
+	import {loadLoginOwner,getMemberId,hasAuthOwner} from '../../api/owner/ownerApi.js';
+	import {getUserName,getUserTel} from '@/api/user/userApi.js';
+
+	import authOwnerDialog from '@/components/owner/auth-owner-dialog.vue'
 	export default {
 		name: "my-person",
 		data() {
@@ -82,6 +86,9 @@
 		created() {
 			this.refreshPageLoginInfo();
 		},
+		components: {
+			authOwnerDialog
+		},
 		methods: {
 			//切换小区
 			_changeCommunity: function() {
@@ -97,6 +104,8 @@
 				}
 				_that.communityName = getCommunityName();
 				_that.login = true;
+				_that.userName = getUserName();
+				_that.userPhone = getUserTel();
 				_that.loadOwenrInfo();
 				_that.userInfo = context.getUserInfo();
 				this.loadOwnerHeaderImg();
@@ -132,8 +141,6 @@
 					}else{
 						_that.headerImg =conf.imgUrl+'/h5/images/serve/head.png';
 					}
-					_that.userName = _data.name;
-					_that.userPhone = _data.link;
 				})
 			},
 			// 余额
@@ -209,17 +216,11 @@
 			},
 			// 我的钱包
 			myAccount: function() {
-				if (!this.ckeckUserInfo()) {
+				hasAuthOwner(this).then(_owner => {
 					this.vc.navigateTo({
-						url: '../login/showlogin'
-					}, () => {
-						this.refreshPageLoginInfo();
+						url: '/pages/account/myAccount',
 					});
-					return;
-				}
-				this.vc.navigateTo({
-					url: '/pages/account/myAccount',
-				});
+				})
 			},
 			//优惠券
 			coupons: function(_item) {

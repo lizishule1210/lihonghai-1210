@@ -24,6 +24,7 @@
 			</view>
 		</view>
 		<!-- #endif -->
+		<auth-owner-dialog ref="authOwnerDialogRef"></auth-owner-dialog>
 	</view>
 </template>
 
@@ -31,104 +32,124 @@
 	import context from '@/lib/java110/Java110Context.js';
 	const factory = context.factory; //获取app实例
 	const constant = context.constant;
+	import {
+		hasAuthOwner
+	} from '@/api/owner/ownerApi.js';
+	import authOwnerDialog from '@/components/owner/auth-owner-dialog.vue'
 	export default {
 		name: "myMenu",
 		data() {
 			return {
 				order_list: [{
 						name: '待付款',
-						src: this.imgUrl+'/h5/images/serve/order1.png',
+						src: this.imgUrl + '/h5/images/serve/order1.png',
 						href: ''
 					},
 					{
 						name: '待发货',
-						src: this.imgUrl+'/h5/images/serve/order2.png',
+						src: this.imgUrl + '/h5/images/serve/order2.png',
 						href: ''
 					},
 					{
 						name: '待收货',
-						src: this.imgUrl+'/h5/images/serve/order3.png',
+						src: this.imgUrl + '/h5/images/serve/order3.png',
 						href: ''
 					},
 					{
 						name: '已完成',
-						src: this.imgUrl+'/h5/images/serve/order4.png',
+						src: this.imgUrl + '/h5/images/serve/order4.png',
 						href: ''
 					}
 				],
 				serve_list: [{
 						name: '业主信息',
-						src: this.imgUrl+'/h5/images/serve/my1.png',
-						href: '/pages/viewBindOwner/viewBindOwner'
+						src: this.imgUrl + '/h5/images/serve/my1.png',
+						href: '/pages/viewBindOwner/viewBindOwner',
+						ownerAuth: true
 					},
 					{
 						name: '我的物业',
-						src: this.imgUrl+'/h5/images/serve/my2.png',
-						href: '/pages/my/myProperty'
+						src: this.imgUrl + '/h5/images/serve/my2.png',
+						href: '/pages/my/myProperty',
+						ownerAuth: true
 					},
 					{
 						name: '我的房屋',
-						src: this.imgUrl+'/h5/images/serve/my3.png',
-						href: '/pages/my/myHouse'
+						src: this.imgUrl + '/h5/images/serve/my3.png',
+						href: '/pages/my/myHouse',
+						ownerAuth: true
 					},
 					{
 						name: '我的报修',
-						src: this.imgUrl+'/h5/images/serve/my4.png',
-						href: '/pages/repair/myRepair'
+						src: this.imgUrl + '/h5/images/serve/my4.png',
+						href: '/pages/repair/myRepair',
+						ownerAuth: true
 					},
 					{
 						name: '缴费记录',
-						src: this.imgUrl+'/h5/images/serve/my5.png',
-						href: '/pages/fee/payFeeDetail'
+						src: this.imgUrl + '/h5/images/serve/my5.png',
+						href: '/pages/fee/payFeeDetail',
+						ownerAuth: true
 					},
 					{
 						name: '我的车位',
-						src: this.imgUrl+'/h5/images/serve/my6.png',
-						href: '/pages/applyparking/parkingInfo'
+						src: this.imgUrl + '/h5/images/serve/my6.png',
+						href: '/pages/applyparking/parkingInfo',
+						ownerAuth: true
 					},
 					{
 						name: '我的投诉',
-						src: this.imgUrl+'/h5/images/serve/11.png',
-						href: '/pages/complaint/complaintList'
+						src: this.imgUrl + '/h5/images/serve/11.png',
+						href: '/pages/complaint/complaintList',
+						ownerAuth: true
 					},
 					{
 						name: '门禁日志',
-						src: this.imgUrl+'/h5/images/serve/my9.png',
-						href: '/pages/machine/machineTranslateLog'
+						src: this.imgUrl + '/h5/images/serve/my9.png',
+						href: '/pages/machine/machineTranslateLog',
+						ownerAuth: true
 					},
 					{
 						name: '空置房记录',
-						src: this.imgUrl+'/h5/images/serve/my8.png',
-						href: '/pages/applyRoom/myRoomList'
+						src: this.imgUrl + '/h5/images/serve/my8.png',
+						href: '/pages/applyRoom/myRoomList',
+						ownerAuth: true
 					},
 					{
 						name: '装修记录',
-						src: this.imgUrl+'/h5/images/serve/my10.png',
-						href: '/pages/renovation/myRoomList'
+						src: this.imgUrl + '/h5/images/serve/my10.png',
+						href: '/pages/renovation/myRoomList',
+						ownerAuth: true
 					},
 					{
 						name: '订场记录',
-						src: this.imgUrl+'/h5/images/serve/my8.png',
-						href: '/pages/appointment/myBoomList'
-					},	
+						src: this.imgUrl + '/h5/images/serve/my8.png',
+						href: '/pages/appointment/myBoomList',
+						ownerAuth: false
+					},
 					{
 						name: '预约记录',
-						src: this.imgUrl+'/h5/images/serve/my8.png',
-						href: '/pages/reserve/reserveMyOrder'
+						src: this.imgUrl + '/h5/images/serve/my8.png',
+						href: '/pages/reserve/reserveMyOrder',
+						ownerAuth: false
 					},
 					{
 						name: '放行记录',
-						src: this.imgUrl+'/h5/images/serve/my8.png',
-						href: '/pages/itemRelease/myItemReleaseList'
-					},{
-						name: '充电订单',
-						src: this.imgUrl+'/h5/images/serve/11.png',
-						href: '/pages/machine/chargeMachineOrders'
+						src: this.imgUrl + '/h5/images/serve/my8.png',
+						href: '/pages/itemRelease/myItemReleaseList',
+						ownerAuth: true
 					},
+					// {
+					// 	name: '充电订单',
+					// 	src: this.imgUrl + '/h5/images/serve/11.png',
+					// 	href: '/pages/machine/chargeMachineOrders',
+					// 	ownerAuth: false
+					// },
 					{
 						name: '发票',
-						src: this.imgUrl+'/h5/images/serve/my5.png',
-						href: '/pages/invoice/invoice'
+						src: this.imgUrl + '/h5/images/serve/my5.png',
+						href: '/pages/invoice/invoice',
+						ownerAuth: true
 					},
 				]
 			};
@@ -136,11 +157,22 @@
 		created() {
 
 		},
+		components: {
+			authOwnerDialog
+		},
 		methods: {
 			// 我的服务跳转
 			to_serve(v) {
-				this.vc.navigateTo({
-					url: v.href,
+				if (!v.ownerAuth) {
+					this.vc.navigateTo({
+						url: v.href
+					});
+					return;
+				}
+				hasAuthOwner(this).then(_owner => {
+					this.vc.navigateTo({
+						url: v.href
+					});
 				})
 			},
 			ckeckUserInfo: function() {
@@ -165,7 +197,8 @@
 
 <style lang="less">
 	.order_box {
-			margin-top:20upx;
+		margin-top: 20upx;
+
 		.order_title {
 			line-height: 42upx;
 			font-size: 30upx;
@@ -198,7 +231,8 @@
 	}
 
 	.serve_box {
-		margin-top:20upx;
+		margin-top: 20upx;
+
 		.serve_title {
 			line-height: 42upx;
 			font-size: 30upx;

@@ -35,7 +35,7 @@
 <script>
 
 	import {getOwnerCommunitys} from '../../api/community/communityApi.js'
-	import {getCurOwner} from '../../api/owner/ownerApi.js'
+	import {getCurOwner,hasAuthOwner} from '../../api/owner/ownerApi.js'
 	import mapping from '../../constant/MappingConstant.js'
 
 	export default {
@@ -46,7 +46,11 @@
 			}
 		},
 		onLoad() {
-			this._loadCommunitys();
+			let _that = this;
+			hasAuthOwner().then(_owner=>{
+				_that._loadCommunitys();
+			})
+			
 		},
 		methods: {
 			_loadCommunitys: function() {

@@ -39,14 +39,16 @@
 			<view class="cu-dialog">
 				<view class="cu-bar bg-white justify-end">
 					<view class="content">拨打电话
-					<text v-if="property.communityQrCode">/ 加微信好友</text>
+						<text v-if="property.communityQrCode">/ 加微信好友</text>
 					</view>
 					<view class="action" @tap="_cancleCall()">
 						<text class="cuIcon-close text-red"></text>
 					</view>
 				</view>
 				<view class="padding-xl">
-					<view v-if="property.communityQrCode"><image class="call-qrcode" :src="property.communityQrCode"></image></view>
+					<view v-if="property.communityQrCode">
+						<image class="call-qrcode" :src="property.communityQrCode"></image>
+					</view>
 					<view>您确认拨打,{{property.communityName}}物业客服电话<br />{{property.sCommunityTel}}</view>
 				</view>
 				<view class="cu-bar bg-white justify-end">
@@ -55,12 +57,13 @@
 				</view>
 			</view>
 		</view>
+		<auth-owner-dialog ref="authOwnerDialogRef"></auth-owner-dialog>
 	</view>
 </template>
 
 <script>
 	import {
-		hasOwner
+		hasAuthOwner
 	} from '../../api/owner/ownerApi.js';
 	import {
 		hasLogin
@@ -69,8 +72,14 @@
 	import {
 		getProperty
 	} from '../../api/property/propertyApi.js';
-	
-	import {getCommunityName,getCommunityTel} from '../../api/community/communityApi.js';
+
+	import authOwnerDialog from '@/components/owner/auth-owner-dialog.vue'
+
+
+	import {
+		getCommunityName,
+		getCommunityTel
+	} from '../../api/community/communityApi.js';
 
 	export default {
 		name: "indexMenu",
@@ -84,13 +93,15 @@
 						src: this.imgUrl + '/h5/images/serve/new1.png',
 						name: '报事报修',
 						desc: '一键维修',
-						href: '/pages/repair/repair'
+						href: '/pages/repair/repair',
+						ownerAuth:true
 					},
 					{
 						src: this.imgUrl + '/h5/images/serve/new2.png',
 						name: '联系物业',
 						desc: '一键搞定',
-						href: '_callPropertyTel'
+						href: '_callPropertyTel',
+						ownerAuth:false
 					},
 				],
 			};
@@ -98,43 +109,53 @@
 		created() {
 			this._loadFunc();
 		},
+		components: {
+			authOwnerDialog
+		},
 		methods: {
 			_loadFunc: function() {
 				this.home_list = [{
 							name: '社区公告',
 							src: this.imgUrl + '/h5/images/serve/7.png',
-							href: '/pages/notice/index'
+							href: '/pages/notice/index',
+							ownerAuth: false
 						},
 						{
 							name: '家庭成员',
 							src: this.imgUrl + '/h5/images/serve/2.png',
-							href: '/pages/family/familyList'
+							href: '/pages/family/familyList',
+							ownerAuth: true
 						},
 						{
 							name: '访客通行',
 							src: this.imgUrl + '/h5/images/serve/3.png',
-							href: '/pages/visit/visitList'
+							href: '/pages/visit/visitList',
+							ownerAuth: true
 						},
 					],
 					this.serve_list = [{
 							name: '生活缴费',
 							src: this.imgUrl + '/h5/images/serve/1.png',
-							href: '/pages/fee/oweFee'
+							href: '/pages/fee/oweFee',
+							ownerAuth: true
 						},
 						{
 							name: '房屋费',
 							src: this.imgUrl + '/h5/images/serve/5.png',
-							href: '/pages/fee/roomFeeListNew'
+							href: '/pages/fee/roomFeeListNew',
+							ownerAuth: true
 						},
 						{
 							name: '停车费',
 							src: this.imgUrl + '/h5/images/serve/9.png',
-							href: '/pages/fee/payParkingFeeList'
+							href: '/pages/fee/payParkingFeeList',
+							ownerAuth: true
 						},
 						{
 							name: '一键开门',
 							src: this.imgUrl + '/h5/images/serve/8.png',
-							href: '/pages/machine/openDoor'
+							href: '/pages/machine/openDoor',
+							ownerAuth: true
 						},
 						// {
 						// 	name: '人脸识别',
@@ -144,13 +165,28 @@
 					]
 			},
 			to: function(v) {
-				if (v.href == '_callPropertyTel') {
-					this.callPropertyTel();
-				} else {
-					this.vc.navigateTo({
-						url: v.href
-					});
+				if (!v.ownerAuth) {
+					if (v.href == '_callPropertyTel') {
+						this.callPropertyTel();
+					} else {
+						this.vc.navigateTo({
+							url: v.href
+						});
+					}
+					return;
 				}
+				hasAuthOwner(this).then(_owner => {
+					if (v.href == '_callPropertyTel') {
+						this.callPropertyTel();
+					} else {
+						this.vc.navigateTo({
+							url: v.href
+						});
+					}
+				}, _err => {
+
+				})
+
 			},
 			callPropertyTel: function() { //拨打电话
 				let _that = this;
@@ -160,11 +196,11 @@
 					});
 					return;
 				}
-				
+
 				this.property.sCommunityTel = getCommunityTel();
 				this.property.communityName = getCommunityName();
 				_that.callPropertyModal = true;
-				
+
 			},
 			_doCall: function() {
 
@@ -318,8 +354,8 @@
 			margin-right: 0;
 		}
 	}
-	
-	.call-qrcode{
+
+	.call-qrcode {
 		width: 480upx;
 		height: 480upx;
 	}

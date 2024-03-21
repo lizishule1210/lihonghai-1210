@@ -9,13 +9,17 @@
 				</view>
 			</view>
 		</view>
+		<auth-owner-dialog ref="authOwnerDialogRef"></auth-owner-dialog>
+
 	</view>
 </template>
 
 <script>
 	import {
-		hasOwner
-	} from '@/api/owner/ownerApi.js'
+		hasAuthOwner
+	} from '@/api/owner/ownerApi.js';
+	import authOwnerDialog from '@/components/owner/auth-owner-dialog.vue'
+
 	export default {
 		name: "serviceProperty",
 		data() {
@@ -26,163 +30,176 @@
 		created() {
 			this._loadMenu();
 		},
+		components: {
+			authOwnerDialog
+		},
 		methods: {
 			to: function(v) {
 				if (v.name == '商圈') {
 					uni.switchTab({
 						url: v.href
-					})
-				} else if (v.href != '') {
-					if (v.needLogin == 'N') {
-						this.vc.navigateTo({
-							url: v.href
-						});
-						return;
-					}
-					hasOwner();
-					this.vc.navigateTo({
-						url: v.href
 					});
-
-				} else {
+					return;
+				}
+				if (!v.href) {
 					uni.showToast({
 						icon: 'none',
 						title: '此功能暂不开放'
-					})
+					});
+					return;
 				}
+				if (!v.ownerAuth) {
+					this.vc.navigateTo({
+						url: v.href
+					});
+					return;
+				}
+				hasAuthOwner(this).then(_owner => {
+					this.vc.navigateTo({
+						url: v.href
+					});
+				})
+				
+
+
 			},
 			_loadMenu: function() {
 				this.real_list = [{
 						name: '生活缴费',
 						src: this.imgUrl + '/h5/images/serve/1.png',
-						href: '/pages/fee/oweFee'
+						href: '/pages/fee/oweFee',
+						ownerAuth:true
 					},
-					// {
-					// 	name: '二维码交费',
-					// 	src: this.imgUrl+'/h5/images/serve/1.png',
-					// 	href: '/pages/fee/payQrCode?communityId=2023052267100146&pfqId=102023091363230004'
-					// },
 					{
 						name: '房屋费',
 						src: this.imgUrl + '/h5/images/serve/5.png',
-						href: '/pages/fee/roomFeeListNew'
+						href: '/pages/fee/roomFeeListNew',
+						ownerAuth:true
 					}, {
 						name: '停车费',
 						src: this.imgUrl + '/h5/images/serve/9.png',
-						href: '/pages/fee/payParkingFeeList'
+						href: '/pages/fee/payParkingFeeList',
+						ownerAuth:true
 					}, {
 						name: '合同费',
 						src: this.imgUrl + '/h5/images/serve/12.png',
-						href: '/pages/fee/contractFeeList'
+						href: '/pages/fee/contractFeeList',
+						ownerAuth:true
 					},
 					{
 						name: '水电充值',
 						src: this.imgUrl + '/h5/images/serve/5.png',
-						href: '/pages/meter/meter'
+						href: '/pages/meter/meter',
+						ownerAuth:true
 					},
 					{
 						name: '家庭成员',
 						src: this.imgUrl + '/h5/images/serve/2.png',
-						href: '/pages/family/familyList'
+						href: '/pages/family/familyList',
+						ownerAuth:true
 					},
 					{
 						name: '访客通行',
 						src: this.imgUrl + '/h5/images/serve/3.png',
-						href: '/pages/visit/visitList'
+						href: '/pages/visit/visitList',
+						ownerAuth:true
 					},
 					{
 						name: '投诉咨询',
 						src: this.imgUrl + '/h5/images/serve/4.png',
-						href: '/pages/complaint/complaint'
+						href: '/pages/complaint/complaint',
+						ownerAuth:true
 					},
 					{
 						name: '报事维修',
 						src: this.imgUrl + '/h5/images/serve/6.png',
-						href: '/pages/repair/repair'
+						href: '/pages/repair/repair',
+						ownerAuth:true
 					},
 					{
 						name: '社区公告',
 						src: this.imgUrl + '/h5/images/serve/7.png',
-						href: '/pages/notice/index'
+						href: '/pages/notice/index',
+						ownerAuth:false
 					},
 					{
 						name: '一键开门',
 						src: this.imgUrl + '/h5/images/serve/8.png',
-						href: '/pages/machine/openDoor'
+						href: '/pages/machine/openDoor',
+						ownerAuth:true
 					},
 					{
 						name: '装修报备',
 						src: this.imgUrl + '/h5/images/serve/10.png',
-						href: '/pages/renovation/roomRenovation'
+						href: '/pages/renovation/roomRenovation',
+						ownerAuth:true
 					},
 					{
 						name: '业主信息',
 						src: this.imgUrl + '/h5/images/serve/my1.png',
-						href: '/pages/viewBindOwner/viewBindOwner'
+						href: '/pages/viewBindOwner/viewBindOwner',
+						ownerAuth:true
 					},
 					{
 						name: "车位申请",
 						src: this.imgUrl + "/h5/images/serve/my6.png",
-						href: "/pages/applyparking/applyparking"
+						href: "/pages/applyparking/applyparking",
+						ownerAuth:true
 					},
 					{
 						name: "投票问卷",
 						src: this.imgUrl + "/h5/images/serve/my2.png",
-						href: "/pages/questionAnswer/questionAnswer"
-					}, 
+						href: "/pages/questionAnswer/questionAnswer",
+						ownerAuth:true
+					},
 					{
 						name: '空置房申请',
 						src: this.imgUrl + '/h5/images/serve/my9.png',
-						href: '/pages/applyRoom/applyRoom'
+						href: '/pages/applyRoom/applyRoom',
+						ownerAuth:true
 					},
 					{
 						name: '球场预约',
 						src: this.imgUrl + '/h5/images/serve/order4.png',
-						href: '/pages/appointment/appointment'
+						href: '/pages/appointment/appointment',
+						ownerAuth:false
 					},
 					{
 						name: '就餐',
 						src: this.imgUrl + '/h5/images/serve/order4.png',
-						href: '/pages/reserve/reserveDining'
+						href: '/pages/reserve/reserveDining',
+						ownerAuth:false
 					},
 					{
 						name: '预约服务',
 						src: this.imgUrl + '/h5/images/serve/order4.png',
-						href: '/pages/reserve/reserveService'
+						href: '/pages/reserve/reserveService',
+						ownerAuth:false
 					},
 					{
 						name: '物品放行',
 						src: this.imgUrl + '/h5/images/serve/order4.png',
-						href: '/pages/itemRelease/itemRelease'
+						href: '/pages/itemRelease/itemRelease',
+						ownerAuth:true
 					},
-					{
-						name: '智能充电',
-						src: this.imgUrl + '/h5/images/serve/my3.png',
-						href: '/pages/machine/chargeMachines',
-						needLogin: 'N'
-					},
+					// {
+					// 	name: '智能充电',
+					// 	src: this.imgUrl + '/h5/images/serve/my3.png',
+					// 	href: '/pages/machine/chargeMachines',
+					// 	ownerAuth:false
+					// },
 					{
 						name: '物业打分',
 						src: this.imgUrl + '/h5/images/serve/my9.png',
-						href: '/pages/complaint/examineStaff'
+						href: '/pages/complaint/examineStaff',
+						ownerAuth:true
 					},
 					{
 						name: '小区公示',
 						src: this.imgUrl + '/h5/images/serve/my1.png',
-						href: '/pages/common/communityPublicity'
+						href: '/pages/common/communityPublicity',
+						ownerAuth:false
 					},
-					// {
-					// 	name: "返省上报",
-					// 	src: this.imgUrl + "/h5/images/serve/my3.png",
-					// 	href: "/pages/reportInfoBack/reportInfoBack",
-					// 	needLogin: 'N'
-					// },
-					
-					// {
-					// 	name: '设备',
-					// 	src: this.imgUrl + '/h5/images/serve/order4.png',
-					// 	href: '/pages/machine/machine?machineId=102022110791780032&communityId=2022110264250009'
-					// },
 				];
 			}
 		}

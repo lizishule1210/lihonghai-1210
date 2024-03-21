@@ -87,7 +87,6 @@
 			//todo 清除缓存内容，以防 业主后退，然后还显示他的东西
 			uni.removeStorageSync("JAVA110_USER_INFO");
 			uni.removeStorageSync("currentCommunityInfo");
-			uni.removeStorageSync("ownerInfo");
 			removeUserLoginInfo();
 		},
 		methods: {
@@ -119,7 +118,7 @@
 						//todo 保存登录信息
 						saveUserLoginInfo(_user.userId, _user.token, _user.key);
 						uni.navigateTo({
-							url:'/pages/login/loginInitWechat?communityId='+_user.communityId+"&appUserId="+_user.appUserId
+							url:'/pages/login/loginInitWechat?communityId='+_user.communityId
 						})
 					},err=>{
 						uni.showToast({

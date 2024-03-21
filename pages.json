@@ -1005,6 +1005,22 @@
                 "enablePullDownRefresh": false
             }
             
+        },
+        {
+        	"path" : "pages/index/authOwner",
+        	"style" : 
+        	{
+        		"navigationBarTitleText" : "房屋认证",
+        		"enablePullDownRefresh" : false
+        	}
+        },
+        {
+        	"path" : "pages/family/selectRoom",
+        	"style" : 
+        	{
+        		"navigationBarTitleText" : "",
+        		"enablePullDownRefresh" : false
+        	}
         }
     ],
 	"tabBar": {
