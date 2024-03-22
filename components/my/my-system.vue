@@ -7,6 +7,12 @@
 					<text class="text-grey">设置</text>
 				</view>
 			</view>
+			<view class="cu-item arrow" @click="_toAuthOwner()">
+				<view class="content">
+					<text class="cuIcon-profile text-gray"></text>
+					<text class="text-grey">房屋认证</text>
+				</view>
+			</view>
 			<view class="cu-item arrow" @tap="_logout()" v-if="login">
 				<view class="content">
 					<text class="cuIcon-circlefill text-yellow"></text>
@@ -37,6 +43,7 @@
 
 <script>
 	import context from '@/lib/java110/Java110Context.js';
+	import {hasLogin} from '../../api/user/sessionApi.js'
 	const factory = context.factory; //获取app实例
 	const constant = context.constant;
 	export default {
@@ -119,6 +126,17 @@
 						console.log(error);
 					}
 				});
+			},
+			_toAuthOwner:function(){
+				if(!hasLogin()){
+					this.vc.navigateTo({
+						url: '/pages/login/showlogin'
+					})
+					return;
+				}
+				uni.navigateTo({
+					url:'/pages/index/authOwnerLog'
+				})
 			}
 		}
 	}

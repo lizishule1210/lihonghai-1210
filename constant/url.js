@@ -24,6 +24,10 @@ export default {
 	queryRoomsByApp: baseUrl + 'app/room.queryRoomsByApp', //绑定业主
 	appUserBindingOwner: baseUrl + 'app/owner.appUserBindingOwner', //查询绑定业主
 	authOwner: baseUrl + 'app/owner.authOwner', //业主认证
+	queryAuthOwnerLog: baseUrl + 'app/owner.queryAuthOwnerLog', //查询认证
+	deleteAuthOwner: baseUrl + 'app/owner.deleteAuthOwner', //删除认证
+	
+	
 	ownerRegiter: baseUrl + 'app/owner.ownerRegister', //业主注册
 	ownerRegisterWxPhoto: baseUrl + 'app/owner.ownerRegisterWxPhoto', //业主注册
 	queryAppUserBindingOwner: baseUrl + 'app/owner.listAppUserBindingOwners', //解绑业主

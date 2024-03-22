@@ -397,12 +397,12 @@ export function authOwner(_data) {
 			data: _data,
 			success: function(res) {
 				let _json = res.data;
+				wx.showToast({
+					title: _json.msg,
+					icon: 'none',
+					duration: 2000
+				});
 				if (_json.code != 0) {
-					wx.showToast({
-						title: _json.msg,
-						icon: 'none',
-						duration: 2000
-					});
 					reject(_json.msg);
 					return;
 				}
@@ -411,6 +411,76 @@ export function authOwner(_data) {
 			fail: function(error) {
 				// 查询失败
 				reject();
+			}
+		});
+	})
+}
+
+/**
+ * 删除房屋认证
+ * @param {Object} _data
+ */
+export function deleteAuthOwner(_data) {
+	let msg = "";
+	if (_data.appUserId == "") {
+		msg = "参数错误";
+	} 
+
+	if (msg != "") {
+		wx.showToast({
+			title: msg,
+			icon: 'none',
+			duration: 2000
+		});
+		return;
+	}
+	return new Promise((resolve, reject) => {
+		request({
+			url: url.deleteAuthOwner,
+			method: "POST",
+			data: _data,
+			success: function(res) {
+				let _json = res.data;
+				wx.showToast({
+					title: _json.msg,
+					icon: 'none',
+					duration: 2000
+				});
+				if (_json.code != 0) {
+					reject(_json.msg);
+					return;
+				}
+				resolve(_json);
+			},
+			fail: function(error) {
+				// 查询失败
+				reject();
+			}
+		});
+	})
+}
+
+/**
+ * 查询认证记录
+ * @param {Object} _data
+ */
+export function queryAuthOwnerLog(_data) {
+	return new Promise((resolve, reject) => {
+		let moreRooms = [];
+		request({
+			url: url.queryAuthOwnerLog,
+			method: "GET",
+			data: _data, //动态数据
+			success: function(res) {
+				let _data = res.data;
+				if (_data.code == 0) {
+					resolve(_data);
+					return;
+				}
+				reject(_data.msg);
+			},
+			fail: function(e) {
+				reject(e);
 			}
 		});
 	})

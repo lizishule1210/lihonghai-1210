@@ -1018,7 +1018,15 @@
         	"path" : "pages/family/selectRoom",
         	"style" : 
         	{
-        		"navigationBarTitleText" : "",
+        		"navigationBarTitleText" : "选择房屋",
+        		"enablePullDownRefresh" : false
+        	}
+        },
+        {
+        	"path" : "pages/index/authOwnerLog",
+        	"style" : 
+        	{
+        		"navigationBarTitleText" : "认证记录",
         		"enablePullDownRefresh" : false
         	}
         }

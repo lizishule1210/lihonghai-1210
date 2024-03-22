@@ -22,7 +22,7 @@
 		</view>
 		<view class="cu-form-group">
 			<view class="title">手机号</view>
-			<input v-model="link" placeholder="请输入手机号" class="text-right"></input>
+			<input v-model="link" disabled="disabled" placeholder="请输入手机号" class="text-right"></input>
 		</view>
 		<view class="cu-form-group">
 			<view class="title">人员类型</view>
@@ -128,6 +128,9 @@
 					ownerTypeCd:this.ownerTypeCd,
 				}).then(_data=>{
 					//todo 跳转到认证历史页面
+					uni.navigateTo({
+						url:'/pages/index/authOwnerLog'
+					})
 				})
 			}
 		}

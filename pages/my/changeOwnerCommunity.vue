@@ -33,10 +33,17 @@
 </template>
 
 <script>
-
-	import {getOwnerCommunitys} from '../../api/community/communityApi.js'
-	import {getCurOwner,hasAuthOwner} from '../../api/owner/ownerApi.js'
-	import mapping from '../../constant/MappingConstant.js'
+	import {
+		getOwnerCommunitys
+	} from '../../api/community/communityApi.js'
+	import {
+		getCurOwner,
+		hasAuthOwner
+	} from '../../api/owner/ownerApi.js'
+	import mapping from '../../constant/MappingConstant.js';
+	import {
+		getUserTel
+	} from '@/api/user/userApi.js'
 
 	export default {
 		data() {
@@ -47,31 +54,30 @@
 		},
 		onLoad() {
 			let _that = this;
-			hasAuthOwner().then(_owner=>{
+			hasAuthOwner().then(_owner => {
 				_that._loadCommunitys();
 			})
-			
+
 		},
 		methods: {
 			_loadCommunitys: function() {
 				let _that = this;
-				let _ownerInfo = wx.getStorageSync(mapping.OWNER_INFO);
 				getOwnerCommunitys({
-					link:_ownerInfo.link
-				})
+						link: getUserTel()
+					})
 					.then(_communitys => {
 						_that.communitys = _communitys;
 					});
 			},
 			_doChangeCommunity: function(_community) {
 				uni.setStorageSync(mapping.CURRENT_COMMUNITY_INFO, _community);
-				uni.setStorageSync("ownerInfo",{
-					memberId:_community.memberId,
-					ownerName:_community.name,
-					ownerId:_community.ownerId,
-					ownerTel:_community.link,
-					communityId:_community.communityId,
-					link:_community.link
+				uni.setStorageSync("ownerInfo", {
+					memberId: _community.memberId,
+					ownerName: _community.name,
+					ownerId: _community.ownerId,
+					ownerTel: _community.link,
+					communityId: _community.communityId,
+					link: _community.link
 				})
 				uni.navigateBack({
 					delta: 1
