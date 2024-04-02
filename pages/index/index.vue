@@ -6,7 +6,8 @@
 			<index-menu></index-menu>
 		</view>
 
-		<index-notice></index-notice>
+		<index-notice ref="indexNoticeRef"></index-notice>
+
 		
 	
 	</view>
@@ -100,6 +101,9 @@
 			_that.location = this.vc.getStorageSync('location');
 			if (hasLogin()) {
 				_that.judgeBindOwnerFun();
+			}
+			if(this.$refs.indexNoticeRef){
+				this.$refs.indexNoticeRef._loadData();
 			}
 		},
 
