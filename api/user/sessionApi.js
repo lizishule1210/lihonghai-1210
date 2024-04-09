@@ -58,7 +58,7 @@ export function autoLogin(options) {
 		return;
 	}
 	//todo 如果是 h5 或者 微信小程序 ，检查是否做了配置，如果没有做配置不做自登陆
-	// #ifdef H5 || MP-MP-WEIXIN
+	// #ifdef H5 || MP-WEIXIN
 	autoLoginWechat(options);
 	// #endif
 
